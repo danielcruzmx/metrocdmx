@@ -104,8 +104,8 @@ def obtener_lineas():
                 "naranja_7": "Línea 7 (Naranja)",
                 "verde_8": "Línea 8 (Verde Oscuro)",
                 "cafe_9": "Línea 9 (Café)",
-                "morada_a": "Línea A (Morada)",
-                "gris_verde_b": "Línea B (Verde/Gris)",
+                "morada_A": "Línea A (Morada)",
+                "gris_verde_B": "Línea B (Verde/Gris)",
                 "dorada_12": "Línea 12 (Dorada)"
             }
             
@@ -138,8 +138,8 @@ def obtener_estaciones(nombre_linea: str):
         "línea 7 (naranja)": "naranja_7",
         "línea 8 (verde oscuro)": "verde_8",
         "línea 9 (café)": "cafe_9",
-        "línea a (morada)": "morada_a",
-        "línea b (verde/gris)": "gris_verde_b",
+        "línea a (morada)": "morada_A",
+        "línea b (verde/gris)": "gris_verde_B",
         "línea 12 (dorada)": "dorada_12"
     }
     
