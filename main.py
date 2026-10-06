@@ -1,10 +1,15 @@
 import re
+import os
 import unicodedata
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from swiplserver import PrologMQI
+from fastapi.responses import FileResponse
+
 
 app = FastAPI(title="API Metro CDMX - Prolog")
+
+CARPETA_MAPAS = "iconos"
 
 class SolicitudRuta(BaseModel):
     origen: str
@@ -24,6 +29,17 @@ def normalizar_para_prolog(texto_bonito: str) -> str:
     # 3. Reemplazar espacios intermedios por guiones bajos
     texto = texto.replace(" ", "_")
     return texto    
+
+@app.get("/api/metro/mapa-completo")
+def obtener_mapa_completo():
+    ruta_mapa = os.path.join(CARPETA_MAPAS, "Mexico_City_metro.png")
+    
+    # Validamos si la imagen está guardada en el disco
+    if not os.path.exists(ruta_mapa):
+        raise HTTPException(status_code=404, detail="Archivo mapa_red.png no encontrado.")
+        
+    # Despachamos el archivo físico configurando el tipo MIME correcto para PNG
+    return FileResponse(ruta_mapa, media_type="image/png")
 
 @app.post("/api/metro/ruta")
 def obtener_ruta(solicitud: SolicitudRuta):
