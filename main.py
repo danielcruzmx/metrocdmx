@@ -30,6 +30,19 @@ def normalizar_para_prolog(texto_bonito: str) -> str:
     texto = texto.replace(" ", "_")
     return texto    
 
+def ordenar_lineas_metro(linea: str):
+    # Extrae lo que esté justo después de "Línea " (puede ser un número o una letra)
+    match = re.search(r'Línea\s+([0-9A-Z]+)', linea, re.IGNORECASE)
+    if match:
+        valor = match.group(1)
+        if valor.isdigit():
+            # Si es número (1, 2, 12), devolvemos (0, valor_numérico)
+            return (0, int(valor))
+        else:
+            # Si es letra (A, B), devolvemos (1, letra) para que vayan al final
+            return (1, valor)
+    return (2, linea) 
+
 @app.get("/api/metro/mapa-completo")
 def obtener_mapa_completo():
     ruta_mapa = os.path.join(CARPETA_MAPAS, "Mexico_City_metro.png")
@@ -120,8 +133,8 @@ def obtener_lineas():
                 "naranja_7": "Línea 7 (Naranja)",
                 "verde_8": "Línea 8 (Verde Oscuro)",
                 "cafe_9": "Línea 9 (Café)",
-                "morada_A": "Línea A (Morada)",
-                "gris_verde_B": "Línea B (Verde/Gris)",
+                "morada_a": "Línea A (Morada)",
+                "gris_verde_b": "Línea B (Verde Gris)",
                 "dorada_12": "Línea 12 (Dorada)"
             }
             
@@ -137,6 +150,8 @@ def obtener_lineas():
                 else:
                     # Por si añadiste alguna línea nueva que no esté en el diccionario
                     lineas_bonitas.append(l.replace("_", " ").title())
+
+            lineas_bonitas.sort(key=ordenar_lineas_metro)                    
             
             return {"lineas": lineas_bonitas}
 
@@ -155,12 +170,14 @@ def obtener_estaciones(nombre_linea: str):
         "línea 8 (verde oscuro)": "verde_8",
         "línea 9 (café)": "cafe_9",
         "línea a (morada)": "morada_A",
-        "línea b (verde/gris)": "gris_verde_B",
+        "línea b (verde gris)": "gris_verde_B",
         "línea 12 (dorada)": "dorada_12"
     }
     
     linea_clave = nombre_linea.lower().strip()
     linea_prolog = traductor_inverso.get(linea_clave, linea_clave.replace(" ", "_"))
+
+    print(linea_prolog)
     
     with PrologMQI() as mqi:
         with mqi.create_thread() as prolog_thread:
